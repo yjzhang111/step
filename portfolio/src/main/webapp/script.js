@@ -15,14 +15,22 @@
 /**
  * Adds a random greeting to the page.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function addRandomQuote() {
+  const quotes =
+      ['I still don\'t know what it really means to grow up. However, \
+      if I happen to meet you, one day in the future, by then, \
+      I want to become someone you can be proud to know.', 
+      'I probably just want to leave a trace of myself behind in this world.', 
+      'It must really be a lonelier journey than anyone could imagine. \
+      Cutting through absolute darkness, \
+      encountering nothing but the occasional hydrogen atom. \
+      Flying blindly into the abyss, \
+      believing therein lie the answers to the mysteries of the universe.'];
 
   // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+  const quote = quotes[Math.floor(Math.random() * quotes.length)];
 
   // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+  const quoteContainer = document.getElementById('quote-container');
+  quoteContainer.innerText = quote;
 }
