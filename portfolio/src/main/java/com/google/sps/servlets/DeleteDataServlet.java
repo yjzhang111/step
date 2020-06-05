@@ -18,6 +18,10 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,16 +29,33 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet responsible for deleting tasks. */
-@WebServlet("/delete-comment")
-public class DeleteCommentServlet extends HttpServlet {
+@WebServlet("/delete-data")
+public class DeleteDataServlet extends HttpServlet {
+
+// doPost for deleting a specific comment
+//   @Override
+//   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//     long id = Long.parseLong(request.getParameter("id"));
+
+//     Key commentEntityKey = KeyFactory.createKey("Comment", id);
+//     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+//     datastore.delete(commentEntityKey);
+
+//     // Redirect back to the HTML page.
+//     response.sendRedirect("/index.html");
+//   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    long id = Long.parseLong(request.getParameter("id"));
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
-    Key commentEntityKey = KeyFactory.createKey("Comment", id);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.delete(commentEntityKey);
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+      Key commentKey = entity.getKey();
+      datastore.delete(commentKey);
+    }
 
     // Redirect back to the HTML page.
     response.sendRedirect("/index.html");

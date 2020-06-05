@@ -52,23 +52,29 @@ function createTaskElement(comment) {
   const textElement = document.createElement('span');
   textElement.innerText = comment.text;
 
-  const deleteButtonElement = document.createElement('button');
-  deleteButtonElement.innerText = 'Delete';
-  deleteButtonElement.addEventListener('click', () => {
-    deleteTask(comment);
+// Delete button for deleting a single comment
+//   const deleteButtonElement = document.createElement('button');
+//   deleteButtonElement.innerText = 'Delete';
+//   deleteButtonElement.addEventListener('click', () => {
+//     deleteComment(comment);
 
-    // Remove the task from the DOM.
-    commentElement.remove();
-  });
+//     // Remove the task from the DOM.
+//     commentElement.remove();
+//   });
 
   commentElement.appendChild(textElement);
-  commentElement.appendChild(deleteButtonElement);
+//   commentElement.appendChild(deleteButtonElement);
   return commentElement;
 }
 
-/** Tells the server to delete the task. */
-function deleteTask(comment) {
-  const params = new URLSearchParams();
-  params.append('id', comment.id);
-  fetch('/delete-comment', {method: 'POST', body: params});
+/** Tells the server to delete a specific comment. */
+// function deleteComment(comment) {
+//   const params = new URLSearchParams();
+//   params.append('id', comment.id);
+//   fetch('/delete-data', {method: 'POST', body: params});
+// }
+
+/** Tells the server to delete all comment. */
+function deleteAllComment() {
+  fetch('/delete-data').then(fetch('/leave-comment'));
 }
