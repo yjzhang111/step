@@ -29,14 +29,14 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.FetchOptions;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that returns some example content. */
 @WebServlet("/leave-comment")
 public class DataServlet extends HttpServlet {
 
     ArrayList<Comment> messages = new ArrayList<Comment>();
     int counter = -1;
 
-  /** An item on a todo list. */
+  /** A comment in the comment section. */
 	public final class Comment {
         private final long id;
         private final String text;
@@ -58,26 +58,20 @@ public class DataServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
-        // Iterate through all comments if numComment not specified
-        // for (Entity entity : request.getParameter("numComment") == null ? 
-		// 		results.asIterable() : results.asList(FetchOptions.Builder.withLimit(
-		// 		Integer.parseInt(request.getParameter("numComment"))))) {
-		// 	System.out.println(request.getParameter("numComment"));
-
-        // Get a limited number of comments using doPost
+        // Get a limited number of comments
+        // counter should already be set to the appropriate number through doPOST
         int countComment = 0;
         for (Entity entity : results.asIterable()) {
             if (countComment == counter) {
                 break;
             }
-            ++countComment;
-
             long id = entity.getKey().getId();
             String text = (String) entity.getProperty("text");
             long timestamp = (long) entity.getProperty("timestamp");
 
             Comment comment = new Comment(id, text, timestamp);
             messages.add(comment);
+            ++countComment;
         }
 
         // Convert the ArrayList to JSON
@@ -90,6 +84,9 @@ public class DataServlet extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // If statement determines whether the POST request is
+        // from limiting a certain number of comments to display
+        // or from leaving a new comment
 		if (request.getParameter("numComment") != null) {
 			counter = Integer.parseInt(request.getParameter("numComment"));
 		} else {

@@ -28,23 +28,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet responsible for deleting tasks. */
+/** Servlet responsible for deleting all comments. */
 @WebServlet("/delete-data")
 public class DeleteDataServlet extends HttpServlet {
-
-// doPost for deleting a specific comment
-//   @Override
-//   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//     long id = Long.parseLong(request.getParameter("id"));
-
-//     Key commentEntityKey = KeyFactory.createKey("Comment", id);
-//     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-//     datastore.delete(commentEntityKey);
-
-//     // Redirect back to the HTML page.
-//     response.sendRedirect("/index.html");
-//   }
-
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);

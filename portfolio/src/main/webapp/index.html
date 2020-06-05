@@ -34,11 +34,17 @@
         </ul>
         <p>In my freetime, I watch a lot of Japanese anime and drama. 
             Below is a poster from my favourite studio.</p>
-        <img src="images/weathering_with_you.jpg" alt="The poster of Weathering With You: a girl standing and a boy sitting on the ground, both looking at the sky" style="width:500px;height:333px;">
+        <img src="images/weathering_with_you.jpg" 
+            alt="The poster of Weathering With You: 
+            a girl standing and a boy sitting on the ground, both looking at the sky"
+            style="width:500px;height:333px;">
 		<p>Click here for a random quote from my favourite anime movie</p>
 		<button onclick="addRandomQuote()">Quote</button>
         <div id="quote-container"></div>
+        
         <p>Please enter the number of comments you want to display:<p>
+        <!-- Problem with using method GET here is that numComment cannot be
+            passed in as a parameter -->
         <form action="/leave-comment" method="POST">
             <input type="number" name="numComment" min="0">
             <br/><br/>

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Adds a random quote to the page.
  */
 function addRandomQuote() {
   const quotes =
@@ -27,7 +27,7 @@ function addRandomQuote() {
       Flying blindly into the abyss, \
       believing therein lie the answers to the mysteries of the universe.'];
 
-  // Pick a random greeting.
+  // Pick a random quote.
   const quote = quotes[Math.floor(Math.random() * quotes.length)];
 
   // Add it to the page.
@@ -45,6 +45,7 @@ function getCommentUsingArrowFunctions() {
   });
 }
 
+/** Create HTML elements */
 function createTaskElement(comment) {
   const commentElement = document.createElement('li');
   commentElement.className = 'comment';
@@ -52,27 +53,9 @@ function createTaskElement(comment) {
   const textElement = document.createElement('span');
   textElement.innerText = comment.text;
 
-// Delete button for deleting a single comment
-//   const deleteButtonElement = document.createElement('button');
-//   deleteButtonElement.innerText = 'Delete';
-//   deleteButtonElement.addEventListener('click', () => {
-//     deleteComment(comment);
-
-//     // Remove the task from the DOM.
-//     commentElement.remove();
-//   });
-
   commentElement.appendChild(textElement);
-//   commentElement.appendChild(deleteButtonElement);
   return commentElement;
 }
-
-/** Tells the server to delete a specific comment. */
-// function deleteComment(comment) {
-//   const params = new URLSearchParams();
-//   params.append('id', comment.id);
-//   fetch('/delete-data', {method: 'POST', body: params});
-// }
 
 /** Tells the server to delete all comments. */
 function deleteAllComments() {
