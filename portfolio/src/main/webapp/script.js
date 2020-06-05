@@ -74,7 +74,8 @@ function createTaskElement(comment) {
 //   fetch('/delete-data', {method: 'POST', body: params});
 // }
 
-/** Tells the server to delete all comment. */
-function deleteAllComment() {
-  fetch('/delete-data').then(fetch('/leave-comment'));
+/** Tells the server to delete all comments. */
+function deleteAllComments() {
+  fetch('/delete-data', {method: 'POST'})
+    .then(() => fetch('/leave-comment')).then(() => location.reload());
 }

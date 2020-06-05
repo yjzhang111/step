@@ -39,7 +39,7 @@
 		<button onclick="addRandomQuote()">Quote</button>
         <div id="quote-container"></div>
         <p>Please enter the number of comments you want to display:<p>
-        <form onsubmit="getCommentUsingArrowFunctions()">
+        <form action="/leave-comment" method="POST">
             <input type="number" name="numComment" min="0">
             <br/><br/>
             <input type="submit" />

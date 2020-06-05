@@ -34,6 +34,7 @@ import com.google.appengine.api.datastore.FetchOptions;
 public class DataServlet extends HttpServlet {
 
     ArrayList<Comment> messages = new ArrayList<Comment>();
+    int counter = -1;
 
   /** An item on a todo list. */
 	public final class Comment {
@@ -58,16 +59,25 @@ public class DataServlet extends HttpServlet {
         PreparedQuery results = datastore.prepare(query);
 
         // Iterate through all comments if numComment not specified
-        for (Entity entity : request.getParameter("numComment") == null ? 
-				results.asIterable() : results.asList(FetchOptions.Builder.withLimit(
-				Integer.parseInt(request.getParameter("numComment"))))) {
-			System.out.println(request.getParameter("numComment"));
-			long id = entity.getKey().getId();
-			String text = (String) entity.getProperty("text");
-			long timestamp = (long) entity.getProperty("timestamp");
+        // for (Entity entity : request.getParameter("numComment") == null ? 
+		// 		results.asIterable() : results.asList(FetchOptions.Builder.withLimit(
+		// 		Integer.parseInt(request.getParameter("numComment"))))) {
+		// 	System.out.println(request.getParameter("numComment"));
 
-			Comment comment = new Comment(id, text, timestamp);
-			messages.add(comment);
+        // Get a limited number of comments using doPost
+        int countComment = 0;
+        for (Entity entity : results.asIterable()) {
+            if (countComment == counter) {
+                break;
+            }
+            ++countComment;
+
+            long id = entity.getKey().getId();
+            String text = (String) entity.getProperty("text");
+            long timestamp = (long) entity.getProperty("timestamp");
+
+            Comment comment = new Comment(id, text, timestamp);
+            messages.add(comment);
         }
 
         // Convert the ArrayList to JSON
@@ -80,16 +90,19 @@ public class DataServlet extends HttpServlet {
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		// Get comment
-		String text = request.getParameter("comment");
-		long timestamp = System.currentTimeMillis();
+		if (request.getParameter("numComment") != null) {
+			counter = Integer.parseInt(request.getParameter("numComment"));
+		} else {
+			String text = request.getParameter("comment");
+			long timestamp = System.currentTimeMillis();
 
-		Entity commentEntity = new Entity("Comment");
-		commentEntity.setProperty("text", text);
-		commentEntity.setProperty("timestamp", timestamp);
+			Entity commentEntity = new Entity("Comment");
+			commentEntity.setProperty("text", text);
+			commentEntity.setProperty("timestamp", timestamp);
 
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		datastore.put(commentEntity);
+			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+			datastore.put(commentEntity);
+		}
 
 		// Redirect back to the HTML page.
 		response.sendRedirect("/index.html");
