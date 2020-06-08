@@ -33,59 +33,59 @@ import com.google.appengine.api.datastore.FetchOptions;
 @WebServlet("/leave-comment")
 public class DataServlet extends HttpServlet {
 
-    ArrayList<Comment> messages = new ArrayList<Comment>();
-    int counter = -1;
+	ArrayList<Comment> messages = new ArrayList<Comment>();
+	int counter = -1;
 
-  /** A comment in the comment section. */
+	/** A comment in the comment section. */
 	public final class Comment {
-        private final long id;
-        private final String text;
-        private final long timestamp;
+		private final long id;
+		private final String text;
+		private final long timestamp;
 
-        public Comment(long id, String text, long timestamp) {
-            this.id = id;
-            this.text = text;
-            this.timestamp = timestamp;
-        }
+		public Comment(long id, String text, long timestamp) {
+			this.id = id;
+			this.text = text;
+			this.timestamp = timestamp;
+		}
 	}
-	
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        messages.clear();
-        Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        PreparedQuery results = datastore.prepare(query);
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		messages.clear();
+		Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
-        // Get a limited number of comments
-        // counter should already be set to the appropriate number through doPOST
-        int countComment = 0;
-        for (Entity entity : results.asIterable()) {
-            if (countComment == counter) {
-                break;
-            }
-            long id = entity.getKey().getId();
-            String text = (String) entity.getProperty("text");
-            long timestamp = (long) entity.getProperty("timestamp");
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		PreparedQuery results = datastore.prepare(query);
 
-            Comment comment = new Comment(id, text, timestamp);
-            messages.add(comment);
-            ++countComment;
-        }
+		// Get a limited number of comments
+		// counter should already be set to the appropriate number through doPOST
+		int countComment = 0;
+		for (Entity entity : results.asIterable()) {
+			if (countComment == counter) {
+				break;
+			}
+			long id = entity.getKey().getId();
+			String text = (String) entity.getProperty("text");
+			long timestamp = (long) entity.getProperty("timestamp");
 
-        // Convert the ArrayList to JSON
-        Gson gson = new Gson();
+			Comment comment = new Comment(id, text, timestamp);
+			messages.add(comment);
+			++countComment;
+		}
 
-        // Send the JSON as the response
-        response.setContentType("application/json");
-        response.getWriter().println(gson.toJson(messages));
-    }
+		// Convert the ArrayList to JSON
+		Gson gson = new Gson();
+
+		// Send the JSON as the response
+		response.setContentType("application/json");
+		response.getWriter().println(gson.toJson(messages));
+	}
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // If statement determines whether the POST request is
-        // from limiting a certain number of comments to display
-        // or from leaving a new comment
+		// If statement determines whether the POST request is
+		// from limiting a certain number of comments to display
+		// or from leaving a new comment
 		if (request.getParameter("numComment") != null) {
 			counter = Integer.parseInt(request.getParameter("numComment"));
 		} else {
@@ -102,5 +102,5 @@ public class DataServlet extends HttpServlet {
 
 		// Redirect back to the HTML page.
 		response.sendRedirect("/index.html");
-	}
+		}
 }

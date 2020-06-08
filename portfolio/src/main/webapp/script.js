@@ -35,7 +35,7 @@ function addRandomQuote() {
   quoteContainer.innerText = quote;
 }
 
-function getCommentUsingArrowFunctions() {
+function getComment() {
   fetch('/leave-comment').then(response => response.json()).then((comments) => {
     console.log(comments);
     const commentListElement = document.getElementById('comment-list');
