@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * Adds a random greeting to the page.
+ * Adds a random quote to the page.
  */
 function addRandomQuote() {
   const quotes =
@@ -27,10 +27,42 @@ function addRandomQuote() {
       Flying blindly into the abyss, \
       believing therein lie the answers to the mysteries of the universe.'];
 
-  // Pick a random greeting.
+  // Pick a random quote.
   const quote = quotes[Math.floor(Math.random() * quotes.length)];
 
   // Add it to the page.
   const quoteContainer = document.getElementById('quote-container');
   quoteContainer.innerText = quote;
+}
+
+function getComment() {
+  fetch('/leave-comment').then(response => response.json()).then((comments) => {
+    const commentListElement = document.getElementById('comment-list');
+    comments.forEach((comment) => {
+      commentListElement.appendChild(createTaskElement(comment));
+    })
+  }).catch(error => {
+    console.error('There has been a problem with your operation:', error);
+  });
+}
+
+/** Create HTML elements */
+function createTaskElement(comment) {
+  const commentElement = document.createElement('li');
+  commentElement.className = 'comment';
+
+  const textElement = document.createElement('span');
+  textElement.innerText = comment.text;
+
+  commentElement.appendChild(textElement);
+  return commentElement;
+}
+
+/** Tells the server to delete all comments. */
+function deleteAllComments() {
+  fetch('/delete-data', {method: 'POST'})
+    .then(() => fetch('/leave-comment')).then(() => location.reload())
+    .catch(error => {
+    console.error('There has been a problem with your operation:', error);
+    });
 }
