@@ -33,8 +33,9 @@ import com.google.appengine.api.datastore.FetchOptions;
 @WebServlet("/leave-comment")
 public class DataServlet extends HttpServlet {
 
-  ArrayList<Comment> messages = new ArrayList<Comment>();
-  int counter = -1;
+  List<Comment> messages = new ArralyList<>();
+  // Initialized to -1 in case the user does not specify a number
+  int numComment = -1;
 
   /** A comment in the comment section. */
   public final class Comment {
@@ -58,10 +59,10 @@ public class DataServlet extends HttpServlet {
     PreparedQuery results = datastore.prepare(query);
 
     // Get a limited number of comments
-    // counter should already be set to the appropriate number through doPOST
-    int countComment = 0;
+    // numComment should already be set to the appropriate number through doPOST
+    int counter = 0;
     for (Entity entity : results.asIterable()) {
-      if (countComment == counter) {
+      if (counter == numComment) {
         break;
       }
       long id = entity.getKey().getId();
@@ -70,7 +71,7 @@ public class DataServlet extends HttpServlet {
 
       Comment comment = new Comment(id, text, timestamp);
       messages.add(comment);
-      ++countComment;
+      ++counter;
     }
 
     // Convert the ArrayList to JSON
@@ -87,7 +88,7 @@ public class DataServlet extends HttpServlet {
     // from limiting a certain number of comments to display
     // or from leaving a new comment
     if (request.getParameter("numComment") != null) {
-      counter = Integer.parseInt(request.getParameter("numComment"));
+      numComment = Integer.parseInt(request.getParameter("numComment"));
     } else {
       String text = request.getParameter("comment");
       long timestamp = System.currentTimeMillis();
