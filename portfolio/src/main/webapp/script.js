@@ -37,11 +37,12 @@ function addRandomQuote() {
 
 function getComment() {
   fetch('/leave-comment').then(response => response.json()).then((comments) => {
-    console.log(comments);
     const commentListElement = document.getElementById('comment-list');
     comments.forEach((comment) => {
       commentListElement.appendChild(createTaskElement(comment));
     })
+  }).catch(error => {
+    console.error('There has been a problem with your operation:', error);
   });
 }
 
@@ -60,7 +61,10 @@ function createTaskElement(comment) {
 /** Tells the server to delete all comments. */
 function deleteAllComments() {
   fetch('/delete-data', {method: 'POST'})
-    .then(() => fetch('/leave-comment')).then(() => location.reload());
+    .then(() => fetch('/leave-comment')).then(() => location.reload())
+    .catch(error => {
+    console.error('There has been a problem with your operation:', error);
+    });
 }
 
 function initMap() {
