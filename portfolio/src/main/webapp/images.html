@@ -6,12 +6,16 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="initMap();">
     <a href="index.html" class="button">Home</button>
     <a href="https://www.linkedin.com/in/yijia-sylvia-zhang" class="button">LinkedIn</a>
 	<a href="https://github.com/yjzhang111" class="button">GitHub</a>
 	<a href="projects.html" class="button">Projects</a>
 	<a href="images.html" class="button">Gallery</a>
+
+    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-3acBoJ17cFd3-8vYCyKTeYT5cVtfHfI&callback=initMap"
+    async defer></script>
 
     <div id="content">
       <h2>Here are my favourite places : </h2>
@@ -29,9 +33,6 @@
       
       <p>Havana, Cuba</p>
       <img src="images/IMG-5.jpg" alt="National Capitol Building" style="width:504px;height:378px;">
-
-      <p>Trinidad, Cuba</p>
-      <img src="images/IMG-6.jpg" alt="Sunset in Trinidad" style="width:504px;height:378px;">
 	</div>
   </body>
 </html>
