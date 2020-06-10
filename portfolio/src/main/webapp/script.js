@@ -69,7 +69,20 @@ function deleteAllComments() {
 
 function initMap() {
   const map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: -34.397, lng: 150.644},
-    zoom: 8
+    center: {lat: 34.995, lng: 135.785},
+    zoom: 1
   });
+
+  // Coordinates of each place on images.html
+  var locations = [['chaka', 36.698, 99.106], ['banff', 51.349, -116.160], 
+    ['pureWater', 34.995, 135.785], ['waikiki', 21.281, -157.837], 
+    ['capitolio', 23.135, -82.359]];
+  
+  // Create a marker on the map for each location
+  for (i = 0; i < locations.length; i++) {  
+    marker = new google.maps.Marker({
+      position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+      map: map
+    });
+  }
 }
