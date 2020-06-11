@@ -112,6 +112,12 @@ function createMarkerForDisplay(lat, lng, title, content) {
   const infoWindow = new google.maps.InfoWindow({content: content});
   marker.addListener('click', () => {
     infoWindow.open(map, marker);
+    map.setZoom(10);
+    map.setCenter(LatLng(marker.getLat(), marker.getLng()));
+  });
+  // When the user closes the editable info window, zooms out.
+  google.maps.event.addListener(infoWindow, 'closeclick', () => {
+    map.setZoom(1);
   });
 }
 
@@ -152,7 +158,7 @@ function createMarkerForEdit(lat, lng) {
  * a submit button.
  */
 function buildInfoWindowInput(lat, lng) {
-	const title = document.createElement('textarea');
+  const title = document.createElement('textarea');
   const content = document.createElement('textarea');
   const button = document.createElement('button');
   button.appendChild(document.createTextNode('Submit'));

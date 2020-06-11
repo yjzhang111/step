@@ -42,6 +42,7 @@ public class InitialMarkerServlet extends HttpServlet {
         new Scanner(getServletContext().getResourceAsStream("/WEB-INF/marker-data.csv"));
     while (scanner.hasNextLine()) {
       String line = scanner.nextLine();
+      // Parse CSV file with comma in field
       String[] cells = line.split(",(?=([^\"]|\"[^\"]*\")*$)");
 
       double lat = Double.parseDouble(cells[0]);
