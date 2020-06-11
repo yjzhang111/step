@@ -67,22 +67,112 @@ function deleteAllComments() {
     });
 }
 
-function initMap() {
-  const map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 34.995, lng: 135.785},
-    zoom: 1
+let map;
+
+/* Editable marker that displays when a user clicks in the map. */
+let editMarker;
+
+/** Creates a map that allows users to add markers. */
+function createMap() {
+  map = new google.maps.Map(
+    document.getElementById('map'),
+    {center: {lat: 34.995, lng: 135.785}, zoom: 1});
+
+  // When the user clicks in the map, show a marker with a text box the user can
+  // edit.
+  map.addListener('click', (event) => {
+    createMarkerForEdit(event.latLng.lat(), event.latLng.lng());
   });
 
-  // Coordinates of each place on images.html
-  var locations = [['chaka', 36.698, 99.106], ['banff', 51.349, -116.160], 
-    ['pureWater', 34.995, 135.785], ['waikiki', 21.281, -157.837], 
-    ['capitolio', 23.135, -82.359]];
-  
-  // Create a marker on the map for each location
-  for (i = 0; i < locations.length; i++) {  
-    marker = new google.maps.Marker({
-      position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-      map: map
-    });
+  fetchInitialMarkers()
+  fetchMarkers();
+}
+
+/** Fetches inital marker data from the server and displays it in a map. */
+function fetchInitialMarkers() {
+  fetch('/initial-marker').then(response => response.json()).then((markers) => {
+    markers.forEach(marker => {
+      createMarkerForDisplay(marker.lat, marker.lng, marker.title, marker.content)});
+  });
+}
+
+/** Fetches markers from the backend and adds them to the map. */
+function fetchMarkers() {
+  fetch('/markers').then(response => response.json()).then((markers) => {
+    markers.forEach(marker => {
+      createMarkerForDisplay(marker.lat, marker.lng, marker.title, marker.content)});
+  });
+}
+
+/** Creates a marker that shows a read-only info window when clicked. */
+function createMarkerForDisplay(lat, lng, title, content) {
+  const marker =
+    new google.maps.Marker({position: {lat: lat, lng: lng}, map: map, title: title});
+
+  const infoWindow = new google.maps.InfoWindow({content: content});
+  marker.addListener('click', () => {
+    infoWindow.open(map, marker);
+  });
+}
+
+/** Sends a marker to the backend for saving. */
+function postMarker(lat, lng, title, content) {
+  const params = new URLSearchParams();
+  params.append('lat', lat);
+  params.append('lng', lng);
+  params.append('title', title);
+  params.append('content', content);
+
+  fetch('/markers', {method: 'POST', body: params});
+}
+
+/** Creates a marker that shows textboxes the user can edit. */
+function createMarkerForEdit(lat, lng) {
+  // If we're already showing an editable marker, then remove it.
+  if (editMarker) {
+    editMarker.setMap(null);
   }
+
+  editMarker =
+    new google.maps.Marker({position: {lat: lat, lng: lng}, map: map});
+
+  const infoWindow =
+    new google.maps.InfoWindow({content: buildInfoWindowInput(lat, lng)});
+
+  // When the user closes the editable info window, remove the marker.
+  google.maps.event.addListener(infoWindow, 'closeclick', () => {
+    editMarker.setMap(null);
+  });
+
+  infoWindow.open(map, editMarker);
+}
+
+/**
+ * Builds and returns HTML elements that show two editable textboxes and
+ * a submit button.
+ */
+function buildInfoWindowInput(lat, lng) {
+	const title = document.createElement('textarea');
+  const content = document.createElement('textarea');
+  const button = document.createElement('button');
+  button.appendChild(document.createTextNode('Submit'));
+
+  button.onclick = () => {
+    postMarker(lat, lng, title.value, content.value);
+    createMarkerForDisplay(lat, lng, title.value, content.value);
+    editMarker.setMap(null);
+  };
+
+  const containerDiv = document.createElement('div');
+  containerDiv.appendChild(document.createTextNode("Title:")); 
+  containerDiv.appendChild(document.createElement('br'));
+  containerDiv.appendChild(title);
+  containerDiv.appendChild(document.createElement('br'));
+  containerDiv.appendChild(document.createTextNode("Content:"));
+  containerDiv.appendChild(document.createElement('br'));
+  containerDiv.appendChild(content);
+  containerDiv.appendChild(document.createElement('br'));
+  containerDiv.appendChild(button);
+
+  return containerDiv;
 }
