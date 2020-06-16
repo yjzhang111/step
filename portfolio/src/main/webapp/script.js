@@ -36,11 +36,37 @@ function addRandomQuote() {
 }
 
 function getComment() {
+  determineLogin();
   fetch('/leave-comment').then(response => response.json()).then((comments) => {
     const commentListElement = document.getElementById('comment-list');
     comments.forEach((comment) => {
       commentListElement.appendChild(createTaskElement(comment));
     })
+  }).catch(error => {
+    console.error('There has been a problem with your operation:', error);
+  });
+}
+
+function determineLogin() {
+  fetch('/get-login-info').then(response => response.json()).then((isLoggedIn) => {
+    console.log("Displaying login info")
+    const element = document.getElementById('form');
+    const textElement = document.createElement('span');
+    const form = document.createElement('form');
+    form.method='GET';
+    form.action='/login';
+    const button = document.createElement('button');
+    if (!isLoggedIn) {
+      textElement.innerText = "Please log in to leave comment";
+      button.innerHTML = "Login";
+    } else {
+      textElement.innerText = "You're logged in!";
+      button.innerHTML = "Logout";
+    }
+
+    form.appendChild(button);
+    element.appendChild(textElement);
+    element.appendChild(form);
   }).catch(error => {
     console.error('There has been a problem with your operation:', error);
   });
