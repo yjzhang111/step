@@ -18,7 +18,7 @@ import com.google.gson.Gson;
 import com.google.sps.data.Marker;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Scanner;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/initial-marker")
 public class InitialMarkerServlet extends HttpServlet {
 
-  private Collection<Marker> markers;
+  private List<Marker> markers;
 
   @Override
   public void init() {
@@ -44,7 +44,6 @@ public class InitialMarkerServlet extends HttpServlet {
       String line = scanner.nextLine();
       // Parse CSV file with comma in field
       String[] cells = line.split(",(?=([^\"]|\"[^\"]*\")*$)");
-
       double lat = Double.parseDouble(cells[0]);
       double lng = Double.parseDouble(cells[1]);
       String title = cells[2];

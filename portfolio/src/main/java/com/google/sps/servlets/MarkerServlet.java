@@ -23,7 +23,7 @@ import com.google.gson.Gson;
 import com.google.sps.data.Marker;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +38,7 @@ public class MarkerServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
 
-    Collection<Marker> markers = getMarkers();
+    List<Marker> markers = getMarkers();
     Gson gson = new Gson();
     String json = gson.toJson(markers);
 
@@ -58,8 +58,8 @@ public class MarkerServlet extends HttpServlet {
   }
 
   /** Fetches markers from Datastore. */
-  private Collection<Marker> getMarkers() {
-    Collection<Marker> markers = new ArrayList<>();
+  private List<Marker> getMarkers() {
+    List<Marker> markers = new ArrayList<>();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query = new Query("Marker");
