@@ -20,6 +20,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -87,9 +89,14 @@ public class DataServlet extends HttpServlet {
     // If statement determines whether the POST request is
     // from limiting a certain number of comments to display
     // or from leaving a new comment
+    UserService userService = UserServiceFactory.getUserService();
     if (request.getParameter("numComment") != null) {
       numComment = Integer.parseInt(request.getParameter("numComment"));
     } else {
+      if (!userService.isUserLoggedIn()) {
+        response.sendRedirect("/login");
+        return;
+      }
       String text = request.getParameter("comment");
       long timestamp = System.currentTimeMillis();
 
