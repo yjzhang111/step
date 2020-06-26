@@ -32,7 +32,7 @@ import java.util.ListIterator;
  * Return an empty list if no time slot is found.
  */
 public final class FindMeetingQuery {
-  public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
+  public Collection<TimeRange> query(List<Event> events, MeetingRequest request) {
     // Initialize a time slot (the whole day)
     List<TimeRange> timeSlots = new ArrayList<>();
     timeSlots.add(TimeRange.WHOLE_DAY);
@@ -57,10 +57,9 @@ public final class FindMeetingQuery {
 
   // Iterate through all events to check
   // if a request attendee is attending a certain event
-  public List<TimeRange> queryForEvent(Collection<Event> events,
+  public List<TimeRange> queryForEvent(List<Event> events,
       List<TimeRange> timeSlots, Collection<String> attendees) {
-    for (Iterator<Event> i = events.iterator(); i.hasNext();) {
-      Event event = i.next();
+    for (Event event: events) {
 
       // Iterate through attendees to check the events each of them are attending
       for (Iterator<String> j = attendees.iterator(); j.hasNext();) {
