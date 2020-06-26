@@ -21,15 +21,21 @@ import java.util.List;
 import java.util.ListIterator;
 
 
-/*  Find time slot(s) that all the required attendees are availble
-    Include optional attendees if at least one time slot can be found
-    Otherwise return the time slots that fit just the mandatory attendees.
-*/
+/**
+ * Find time slot(s) that all the required attendees are available
+ * Include optional attendees if at least one time slot can be found
+ * Otherwise return the time slots that fit just the required attendees.
+
+ * When there is no required attendee, return the time slots that fit
+ * all optional attendees.
+
+ * Return an empty list if no time slot is found.
+ */
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     // Initialize a time slot (the whole day)
     List<TimeRange> timeSlots = new ArrayList<>();
-    timeSlots.add(TimeRange.fromStartDuration(0, 24 * 60));
+    timeSlots.add(TimeRange.WHOLE_DAY);
 
     // Find time slots for required attendees
     timeSlots = queryForEvent(events, timeSlots, request.getAttendees());
@@ -49,7 +55,7 @@ public final class FindMeetingQuery {
     return timeSlots;
   }
 
-  // Iterate through all event to check
+  // Iterate through all events to check
   // if a request attendee is attending a certain event
   public List<TimeRange> queryForEvent(Collection<Event> events,
       List<TimeRange> timeSlots, Collection<String> attendees) {
@@ -61,36 +67,36 @@ public final class FindMeetingQuery {
         String attendee = j.next();
         if (event.getAttendees().contains(attendee)) {
 
-          // Iterate through all time periods to see
+          // Iterate through all time slots to see
           // if any period overlaps with an event the attendees have
           for (ListIterator<TimeRange> k = timeSlots.listIterator(); k.hasNext();) {
-            TimeRange currTime = k.next();
+            TimeRange currTimeSlot = k.next();
             TimeRange eventTime = event.getWhen();
 
-            // Removes the time period when completely covered by event time
-            if (currTime.equals(eventTime) || eventTime.contains(currTime)) {
+            // Removes the time slot when completely covered by event time
+            if (currTimeSlot.equals(eventTime) || eventTime.contains(currTimeSlot)) {
               k.remove();
 
-            // Case B: |-----B------|
-            // Event:      |---|
-            //         |-1-|   |-2--|
-            // Split time period from B into 1 and 2
-            } else if (currTime.contains(eventTime)) {
+            // currTimeSlot: |-----B------|
+            // eventTime   :     |---|
+            //               |-1-|   |-2--|
+            // Split current time slot from B into 1 and 2
+            } else if (currTimeSlot.contains(eventTime)) {
               k.remove();
-              k.add(TimeRange.fromStartEnd(currTime.start(), eventTime.start(), false));
-              k.add(TimeRange.fromStartEnd(eventTime.end(), currTime.end(), false));
+              k.add(TimeRange.fromStartEnd(currTimeSlot.start(), eventTime.start(), false));
+              k.add(TimeRange.fromStartEnd(eventTime.end(), currTimeSlot.end(), false));
             
-            // Case C: |--C---|
-            // Event:      |------|
-            //         |-1-|
-            // Shorten time period from C to 1
-            } else if (currTime.overlaps(eventTime)) {
-              if (TimeRange.ORDER_BY_START.compare(currTime, eventTime) < 0) {
+            // currTimeSlot: |--C---|
+            // eventTime   :     |------|
+            //               |-1-|
+            // Shorten current time slot from C to 1
+            } else if (currTimeSlot.overlaps(eventTime)) {
+              if (TimeRange.ORDER_BY_START.compare(currTimeSlot, eventTime) < 0) {
                 k.remove();
-                k.add(TimeRange.fromStartEnd(currTime.start(), eventTime.start(), false));
+                k.add(TimeRange.fromStartEnd(currTimeSlot.start(), eventTime.start(), false));
               } else {
                 k.remove();
-                k.add(TimeRange.fromStartEnd(eventTime.end(), currTime.end(), false));
+                k.add(TimeRange.fromStartEnd(eventTime.end(), currTimeSlot.end(), false));
               }
             }
           }
@@ -100,7 +106,7 @@ public final class FindMeetingQuery {
     return timeSlots;
   }
   
-  // Delete any time slots that has a duration less than the request time
+  // Delete any time slots that have a duration less than the request time
   public List<TimeRange> deleteUnqualifiedQuery(List<TimeRange> timeSlots, 
       long duration) {
     for (ListIterator<TimeRange> k = timeSlots.listIterator(); k.hasNext();) {
