@@ -276,9 +276,9 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void optionalAttendeeNotConsidered() {
-    // Have each person have different events. We should see three options because each person has
-    // split the available time slot.
-    // Optional attendee has all day event. We should still return the three options
+    // Each person have different events. We should see three options because each person
+    // has split the available time slot.
+    // Optional attendee C has all day event. We should still return the three options
     //
     // Events  :       |--A--|     |--B--|
     // Events  : |--------------C--------------|
@@ -308,7 +308,7 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void optionalAttendeeConsidered() {
-    // Have each person have different events. We should see two options because each person has
+    // Each person have different events. We should see two options because each person has
     // split the available time slot.
     //
     // Events  :       |--A--|--C--|--B--|
@@ -337,10 +337,10 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void justEnoughRoomWithoutOptional() {
-    // Have one person, but make it so that there is just enough room at one point in the day to
-    // have the meeting.
-    // Optional attendee is not considered because the remaining time slot would be shorter
-    // than the request duration
+    // Have one person A, but make it so that there is just enough room at one point
+    // in the day to have the meeting.
+    // Optional attendee B is not considered because the remaining time slot would 
+    // be shorter than the request duration
     //
     // Events  : |--A--|       |----A----|
     // Events  :       |-B-|
@@ -367,6 +367,7 @@ public final class FindMeetingQueryTest {
 
   @Test
   public void noRequiredAttendee() {
+    // No required attendee.
     // Each optional attendee has a different event. We should see three options because
     // the event each person is attending split the available time slot.
     //
